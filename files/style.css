@@ -1,0 +1,491 @@
+/* AppName: FindTheNeighbours 
+   Author: Christos Katsandris (https://www.linkedin.com/in/christos-katsandris/)
+   Location: https://github.com/christoskatsandris/FindTheNeighbours */
+
+/* Fade-in and fade-out transitions code source: https://stackoverflow.com/questions/15907079/css3-transition-fade-out-effect (with some modifications)
+   Callouts code source: https://codepen.io/depthdev/pen/wiIsv (with some modifications) */
+
+@font-face {
+    font-family: 'TwemojiMozilla';
+    src: url('TwemojiMozilla.ttf');
+}
+
+body {
+    margin: 40px;
+    font-family: 'Open Sans', 'TwemojiMozilla';
+    /* Η γραμματοσειρά open sans φορτώνεται στο αρχείο html*/
+    background-color: #fff;
+    color: #444;
+}
+
+.game-panel {
+    height: 100%;
+
+    display: grid;
+    grid-template-columns: 200px auto;
+    grid-template-rows: 70px 30px auto;
+}
+
+#my-country {
+    background-color: #708090;
+    grid-column: 2;
+    grid-row: 1;
+    margin: 0.2em 0.2em;
+    border-radius: 5px;
+    padding: 0.3em 0.8em;
+
+    display: flex;
+    align-items: center;
+}
+
+#my-country-flag {
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px rgba(255, 255, 255, 0.4);
+    object-fit: cover;
+}
+
+#my-country-name {
+    color: white;
+    padding-left: 1em;
+}
+
+#hint-field {
+    margin-left: 20px;
+    color: white;
+}
+
+#hint {
+    margin-left: auto;
+}
+
+#help-container {
+    position: relative;
+    margin-left: 10px;
+}
+
+#help-panel {
+    visibility: hidden;
+    opacity: 0;
+}
+
+#help-panel.visible {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.5s linear;
+}
+
+#help-panel.hidden {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s 0.5s, opacity 0.5s linear;
+}
+
+#help-panel > p {
+    font-size: 0.7em;
+}
+
+#sidebar {
+    background-color: #ff1493;
+    color: #fff;
+    grid-row-start: 1;
+    grid-row-end: 4;
+    margin: 0.2em 0.2em;
+    padding: 2em 1em;
+    border-radius: 5px;
+
+    position: fixed;
+    width: 150px;
+    height: 76vh;
+
+    display: grid;
+    grid-template-columns: auto min-content;
+    grid-template-rows: 50px 30px 30px 30px 30px auto 60px 60px;
+}
+
+#logo {
+    grid-column: 1 /span 2;
+    grid-row: 1;
+    font-size: 1.3em;
+}
+
+#round-text {
+    grid-column: 1;
+    grid-row: 3;
+}
+
+#round-number {
+    grid-column: 2;
+    grid-row: 3;
+    justify-self: right;
+}
+
+#score-text {
+    grid-column: 1;
+    grid-row: 4;
+}
+
+#score-number {
+    grid-column: 2;
+    grid-row: 4;
+    justify-self: right;
+}
+
+#time-elapsed-text {
+    grid-column: 1;
+    grid-row: 5;
+}
+
+#time-elapsed-number {
+    grid-column: 2;
+    grid-row: 5;
+    justify-self: right;
+}
+
+#btn-next-round {
+    grid-column: 1 /span 2;
+    grid-row: 7;
+    margin: 0.3em 0.2em;
+    font-size: 0.8em;
+    border: 0.1em;
+    border-radius: 2px;
+}
+
+#btn-new-game {
+    grid-column: 1 /span 2;
+    grid-row: 8;
+    margin: 0.3em 0.2em;
+    font-size: 0.8em;
+    border: 0.1em;
+    border-radius: 2px;
+}
+
+#neighbours-panel {
+    grid-column: 2;
+    grid-row: 3;
+    margin: 0.2em 0.2em;
+    padding: 5px 0px 5px 5px;
+    border-radius: 5px;
+    position: relative;
+
+    display: flex;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+}
+
+.neighbour {
+    width: 150px;
+    height: 200px;
+    padding: 50px 10px 10px 10px;
+    margin: 0px 20px 20px 0px;
+    box-sizing: border-box;
+    flex-grow: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.neighbour:hover {
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+}
+
+.neighbour-flag {
+    width: 70px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 7px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.6);
+}
+
+.neighbour-name {
+    text-align: center;
+}
+
+.was-clicked {
+    background-color: rgb(245, 245, 245);
+    border-radius: 5px;
+    box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.4);
+    cursor: auto;
+}
+
+.was-clicked.neighbour-is-valid {
+    border: 2px solid lightgreen;
+}
+
+.was-clicked.neighbour-is-invalid {
+    border: 2px solid red;
+}
+
+#next-round-panel {
+    grid-column: 2;
+    grid-row: 3;
+    margin: 0.2em 0.2em;
+    padding: 5px 0px 5px 5px;
+    border-radius: 5px;
+
+    display: none;
+    color: black;
+    font-size: 1.4em;
+    font-weight: bold;
+    justify-content: center;
+    align-items: center;
+    overflow-y: auto;
+
+    background-color: rgba(150, 150, 150, 0.8);
+    z-index: 5;
+}
+
+#progress {
+    background-color: #e7e6e8;
+    border: 1px solid #cccbcc;
+    border-radius: 5px;
+    opacity: 0.8;
+    grid-column: 2;
+    grid-row: 2;
+    margin: 0.2em 0.2em;
+    position: sticky;
+    top: 5px;
+    z-index: 3;
+}
+
+#progress-bar {
+    background-color: #005fba;
+    width: 0;
+    height: 100%;
+    border-radius: 5px;
+}
+
+#settings-panel-container {
+    grid-column: 2;
+    grid-row: 3;
+    margin: 0.2em 0.2em;
+    padding: 5px 0px 5px 5px;
+    border-radius: 5px;
+
+    color: black;
+    background-color: white;
+
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: auto;
+    z-index: 5;
+}
+
+#settings-panel {
+    font-size: 1.3em;
+
+    grid-column: 1;
+    grid-row: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+#high-scores {
+    grid-column: 2;
+    grid-row: 1;
+
+    width: 100%;
+    padding-top: 0.7em;
+    padding-left: 30px;
+
+    display: grid;
+    grid-template-columns: 20vw max-content;
+    grid-template-rows: 70px max-content max-content max-content max-content auto;
+    row-gap: 10px;
+    column-gap: 15px;
+}
+
+#highScoresTitle {
+    grid-column: 1 /span 2;
+    grid-row: 1;
+}
+
+#fiveRoundsHighScoreText {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+#fiveRoundsHighScoreNumber {
+    grid-column: 2;
+    grid-row: 2;
+    justify-self: right;
+}
+
+#tenRoundsHighScoreText {
+    grid-column: 1;
+    grid-row: 3;
+}
+
+#tenRoundsHighScoreNumber {
+    grid-column: 2;
+    grid-row: 3;
+    justify-self: right;
+}
+
+#twentyRoundsHighScoreText {
+    grid-column: 1;
+    grid-row: 4;
+}
+
+#twentyRoundsHighScoreNumber {
+    grid-column: 2;
+    grid-row: 4;
+    justify-self: right;
+}
+
+#maxRoundsHighScoreText {
+    grid-column: 1;
+    grid-row: 5;
+}
+
+#maxRoundsHighScoreNumber {
+    grid-column: 2;
+    grid-row: 5;
+    justify-self: right;
+}
+
+#startButton, #clearHighScores {
+    width: 100px;
+    height: 40px;
+    background-color: #ff1493;
+    color: white;
+    font-size: 1rem;
+    border: 1px solid #cccbcc;
+    border-radius: 5px;
+}
+
+#clearHighScores {
+    grid-column: 1 /span 2;
+    grid-row: 6;
+    width: 120px;
+}
+
+#progress::-webkit-progress-bar {
+    border-radius: 5px;
+}
+
+@media (max-width: 800px) {
+    .game-panel {
+        grid-template-columns: auto;
+        grid-template-rows: 350px 70px 30px auto;
+    }
+
+    #sidebar {
+        position: static;
+        width: inherit;
+        height: unset;
+        grid-row: 1;
+    }
+
+    #my-country {
+        grid-column: unset;
+        grid-row: 2;
+    }
+
+    #neighbours-panel {
+        grid-column: 1;
+        grid-row: 4;
+    }
+
+    #next-round-panel {
+        grid-column: 1;
+        grid-row: 4;
+    }
+
+    #progress {
+        grid-column: unset;
+        height: 22px;
+        grid-row: 3;
+    }
+
+    #settings-panel-container {
+        grid-column: unset;
+        grid-row: 4;
+    }
+
+    #settings-panel {
+        font-size: 1.1em;
+    }
+}
+
+@media (min-width: 800px) {
+    #help-panel {
+        background-color: beige;
+        width: 30vw;
+        height: fit-content;
+        padding: 0 10px;
+    
+        position: absolute;
+        right: 90px;
+        top: 0;
+        z-index: 10;
+    }
+
+    #help-panel::before {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        right: -42px;
+        top: 17px;
+    
+        border: 10px solid transparent;
+        border-left: 32px solid rgb(193, 193, 193);
+        border-left: 32px solid rgba(193, 193, 193, 0.5);
+        z-index: 11;
+    }
+    
+    #help-panel::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        right: -31px;
+        top: 19px;
+        border: 8px solid transparent;
+        border-left: 24px solid beige;
+        z-index: 12;
+    }
+}
+
+@media (max-width: 800px) {
+    #help-panel {
+        background-color: beige;
+        width: 50vw;
+        height: fit-content;
+        padding: 0 10px;
+    
+        position: absolute;
+        right: 90px;
+        bottom: 0;
+        z-index: 10;
+    }
+
+    #help-panel::before {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        right: -42px;
+        bottom: 17px;
+        border: 10px solid transparent;
+        border-left: 32px solid rgb(193, 193, 193);
+        border-left: 32px solid rgba(193, 193, 193, 0.5);
+        z-index: 11;
+    }
+    
+    #help-panel::after {
+        content: "";
+        position: absolute;
+        width: 0;
+        height: 0;
+        right: -31px;
+        bottom: 19px;
+        border: 8px solid transparent;
+        border-left: 24px solid beige;
+        z-index: 12;
+    }
+}

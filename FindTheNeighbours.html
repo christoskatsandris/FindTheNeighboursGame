@@ -1,0 +1,105 @@
+<!-- AppName: FindTheNeighbours 
+     Author: Christos Katsandris (https://www.linkedin.com/in/christos-katsandris/)
+     Location: https://github.com/christoskatsandris/FindTheNeighbours -->
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Βρες τους γείτονες</title>
+        <link rel="stylesheet" href="files/style.css">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+        <script src="files/countries.js"></script>
+        <script src="files/game.js"></script>
+    </head>
+
+    <body>
+        <div class="game-panel">
+            <div id="sidebar">
+                <div id="logo">Βρες τους γείτονες</div>
+
+                <div id="round-text">Γύρος:</div>
+                <div id="round-number"></div>
+
+                <div id="score-text">Σκορ:</div>
+                <div id="score-number"></div>
+
+                <div id="time-elapsed-text">Χρόνος:</div>
+                <div id="time-elapsed-number"></div>
+                
+                <input type="button" id="btn-next-round" name="next-country" value="Επόμενη χώρα" disabled>
+                <input type="button" id="btn-new-game" name="new-game" value="Νέο παιχνίδι">
+            </div>
+
+            <div id="my-country">
+                <img id="my-country-flag" width="50px">
+                <div id="my-country-name">
+                </div>
+                <div id="hint-field"></div>
+                <img id="hint" src="files/Assets/idea-off.png" alt="Ζήτα μία βοήθεια" height="50px" style="display: none;">
+                <div id="help-container">
+                    <img id="help" src="files/Assets/question.png" alt="Οδηγίες παιχνιδιού" height="50px">
+                    <div id="help-panel">
+                        <h4>Οδηγίες παιχνιδιού</h4>
+                        <p>Καλωσήρθες στο παιχνίδι "Βρες τους γείτονες"! Για να ξεκινήσεις, επίλεξε τον αριθμό των γύρων που θέλεις να παίξεις. 
+                            Η χώρα που παίζει σε κάθε γύρο φαίνεται πάνω αριστερά. Για κάθε απάντηση κερδίζεις 10 πόντους αν είναι σωστή 
+                            και χάνεις 5 πόντους αν είναι λανθασμένη. Ένας γύρος θεωρείται κερδισμένος, όταν βρεις όλους τους γείτονες της χώρας, 
+                            ενώ θεωρείται χαμένος αν κάνεις τόσα λάθη, όσοι είναι και οι σωστοί γείτονες της χώρας. Στο τέλος κάθε γύρου, 
+                            πάτησε το κουμπί "Επόμενη χώρα", για να περάσεις στον επόμενο γύρο. Αν χρειαστείς βοήθεια, πάτησε τη λάμπα πάνω δεξιά! 
+                            Η βοήθεια είναι διαθέσιμη, μόνο όταν το σκορ σου είναι μεγαλύτερο από 10 πόντους. Με κάθε χρήση της βοήθειας, 
+                            χάνεις 10 πόντους. Καλή διασκέδαση!<br>Σημείωση: Για καλύτερη εμπειρία χρήσης, ενεργοποίησε τα cookies!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="progress">
+                <div id="progress-bar"></div>
+            </div>
+
+            <div id="settings-panel-container">
+                <div id="settings-panel">
+                    <h3>Πόσους γύρους θέλεις να παίξεις;</h3>
+                    <form id="settings">
+                        <input type="radio" name="howManyRounds" id="fiveRounds" value="fiveRounds">
+                        <label for="threeRounds">5 γύρους</label><br>
+                        <input type="radio" name="howManyRounds" id="tenRounds" value="tenRounds">
+                        <label for="fiveRounds">10 γύρους</label><br>
+                        <input type="radio" name="howManyRounds" id="twentyRounds" value="twentyRounds">
+                        <label for="tenRounds">20 γύρους</label><br>
+                        <input type="radio" name="howManyRounds" id="maxRounds" value="maxRounds">
+                        <label for="maxRounds">Όλες τις χώρες</label><br><br>
+                        <input type="button" name="startButton" id="startButton" value="Έναρξη">
+                    </form>
+                </div>
+                <div id="high-scores">
+                    <h3 id="highScoresTitle">High Scores</h3>
+                    <div id="fiveRoundsHighScoreText">Κατηγορία "5 γύροι"</div>
+                    <div id="fiveRoundsHighScoreNumber"></div>
+
+                    <div id="tenRoundsHighScoreText">Κατηγορία "10 γύροι"</div>
+                    <div id="tenRoundsHighScoreNumber"></div>
+
+                    <div id="twentyRoundsHighScoreText">Κατηγορία "20 γύροι"</div>
+                    <div id="twentyRoundsHighScoreNumber"></div>
+
+                    <div if="maxRoundsHighScoreText">Κατηγορία "Όλες οι χώρες"</div>
+                    <div id="maxRoundsHighScoreNumber"></div>
+
+                    <input type="button" name="clearHighScores" id="clearHighScores" value="Καθαρισμός">
+                </div>
+            </div>
+            <div id="next-round-panel"></div>
+            <div id="neighbours-panel"></div>
+        </div>
+    </body>
+
+    <script>
+    //Το παρακάτω αφορά μόνο τους χρήστες macOS.
+    if (navigator.appVersion.indexOf("Macintosh")>0) {
+        document.body.style.fontFamily = '"Open Sans"';
+    }
+    </script>
+</html>
