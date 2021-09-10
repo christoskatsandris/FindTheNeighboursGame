@@ -271,12 +271,12 @@ class Game {
             localStorage.setItem("fiveRoundsHighScore", String(this.score));
             localStorage.setItem("fiveRoundsBestTime", String(this.stopwatch.time() / 1000));
         }
-        else if (category == 1) {
+        else if (category == 2) {
             nextRoundPanelElement.innerHTML += `"10 γύροι"!`;
             localStorage.setItem("tenRoundsHighScore", String(this.score));
             localStorage.setItem("tenRoundsBestTime", String(this.stopwatch.time() / 1000));
         }
-        else if (category == 2) {
+        else if (category == 4) {
             nextRoundPanelElement.innerHTML += `"20 γύροι"!`;
             localStorage.setItem("twentyRoundsHighScore", String(this.score));
             localStorage.setItem("twentyRoundsBestTime", String(this.stopwatch.time() / 1000));
